@@ -1,6 +1,6 @@
 #include "matrix.h"
 
-matrix_memory::matrix_memory(int rows,int columns) 
+matrix_creation::matrix_creation(int rows,int columns) 
 {
     this->rows_ = rows;
     this->columns_ = columns;
@@ -12,7 +12,7 @@ matrix_memory::matrix_memory(int rows,int columns)
     
 }
 
-matrix_memory::~matrix_memory()
+matrix_creation::~matrix_creation()
 {   
     for(int i = 0; i < rows_;++i)
     {
@@ -21,7 +21,7 @@ matrix_memory::~matrix_memory()
     delete[] memory_;
 }
 
-int& matrix_memory::operator()(int row, int column)
+int& matrix_creation::operator()(int row, int column)
 {
     return memory_[row][column];
 }

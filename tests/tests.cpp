@@ -3,7 +3,7 @@
 
 TEST(Matrix,Test1)
 {
-    matrix_memory a(2,3);
+    matrix_creation a(2,3);
     a(0,0) = 5;
     EXPECT_EQ(a(0,0),5);
 

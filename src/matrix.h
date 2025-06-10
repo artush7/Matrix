@@ -1,5 +1,5 @@
 
-class matrix_memory
+class matrix_creation
 {
 private:
    
@@ -8,8 +8,8 @@ protected:
     int columns_;
     int** memory_;
 public:
-    matrix_memory(int rows,int columns);
-    ~matrix_memory();
+    matrix_creation(int rows,int columns);
+    ~matrix_creation();
     int& operator()(int row, int column);
 
 
