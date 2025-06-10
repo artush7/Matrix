@@ -1,0 +1,27 @@
+#include "matrix.h"
+
+matrix_memory::matrix_memory(int rows,int columns) 
+{
+    this->rows_ = rows;
+    this->columns_ = columns;
+    this->memory_ = new int*[rows_];
+    for(int i = 0;i < rows_;++i)
+    {
+        memory_[i] = new int[columns_];
+    }
+    
+}
+
+matrix_memory::~matrix_memory()
+{   
+    for(int i = 0; i < rows_;++i)
+    {
+        delete[] memory_[i];
+    }
+    delete[] memory_;
+}
+
+int& matrix_memory::operator()(int row, int column)
+{
+    return memory_[row][column];
+}
