@@ -1,19 +1,22 @@
+#include <stdexcept>
 
+
+template <typename T>
 class matrix_implementation
 {
 protected:
     int rows_;
     int columns_;
-    double** memory_;
+    T** memory_;
 public:
     matrix_implementation(int rows,int columns);
     ~matrix_implementation();
-    double& operator()(int row, int column) ;
-    const double& operator()(int row, int column) const;
+    T& operator()(int row, int column) ;
+    const T& operator()(int row, int column) const;
 
 };
-
-class matrix : public matrix_implementation
+template <typename T>
+class matrix : public matrix_implementation<T>
 {
 public:
     matrix(int rows,int columns);
@@ -22,3 +25,128 @@ public:
     matrix operator*(const matrix& other);
     matrix transpose() const;
 };
+
+
+
+template <typename T>
+matrix_implementation<T>::matrix_implementation(int rows,int columns) 
+{
+    this->rows_ = rows;
+    this->columns_ = columns;
+    this->memory_ = new T*[rows_];
+    for(int i = 0;i < rows_;++i)
+    {
+        memory_[i] = new T[columns_];
+    }
+    
+}
+
+template <typename T>
+matrix_implementation<T>::~matrix_implementation()
+{   
+    for(int i = 0; i < rows_;++i)
+    {
+        delete[] memory_[i];
+    }
+    delete[] memory_;
+}
+
+template <typename T>
+T& matrix_implementation<T>::operator()(int row, int column)
+{
+    return memory_[row][column];
+}
+
+template <typename T>
+const T& matrix_implementation<T>::operator()(int row, int column) const
+{
+    return memory_[row][column];
+}
+
+template <typename T>
+matrix<T>::matrix(int rows,int columns) : matrix_implementation<T>(rows,columns) {}
+
+template <typename T>
+matrix<T> matrix<T>::operator+(const matrix<T>& other) 
+{
+
+    if(this->rows_ != other.rows_ || this->columns_ != other.columns_)
+    {
+        throw std::invalid_argument("Matrix dimensions do not match for addition");
+    }
+
+    else
+    {
+        matrix new_matrix(this->rows_,this->columns_);
+
+        for(int i = 0;i < this->rows_;++i)
+        {
+            for(int j = 0;j < this->columns_;++j)
+            {
+                new_matrix(i,j) = (*this)(i,j) + other(i,j);
+            }
+        }
+        return new_matrix;
+    }
+}
+
+template <typename T>
+matrix<T> matrix<T>::operator-(const matrix& other)
+{
+    if (this->rows_ != other.rows_ || this->columns_ != other.columns_)
+    {
+        throw std::invalid_argument("Matrix dimensions do not match for substraction");
+    }
+
+    else
+    {
+        matrix new_matrix(this->rows_,this->columns_);
+
+        for(int i = 0;i < this->rows_;++i)
+        {
+            for(int j = 0;j < this->columns_;++j)
+            {
+                new_matrix(i,j) = (*this)(i,j) - other(i,j);
+            }
+        }
+        return new_matrix;
+    }
+}
+
+template <typename T>
+matrix<T> matrix<T>::operator*(const matrix& other) 
+{
+    if (this->columns_ != other.rows_) 
+    {
+        throw std::invalid_argument("Matrix dimensions do not match for multiplying");
+    }
+
+    matrix new_matrix(this->rows_, other.columns_);
+    for (int i = 0; i < this->rows_;++i) 
+    {
+        for (int j = 0; j < other.columns_;++j) 
+        {
+            double sum = 0;
+            for (int k = 0; k < this->columns_;++k) 
+            {
+                sum += (*this)(i, k) * other(k, j);
+            }
+            new_matrix(i, j) = sum;
+        }
+    }
+    return new_matrix;
+}
+
+template <typename T>
+matrix<T> matrix<T>::transpose() const
+{
+    matrix new_matrix(this->columns_, this->rows_); 
+    for (int i = 0; i < this->columns_;++i) 
+    {
+        for (int j = 0; j < this->rows_;++j) 
+        {
+            new_matrix(i, j) = (*this)(j, i); 
+        }
+    }
+    return new_matrix;
+}

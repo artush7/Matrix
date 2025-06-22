@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
-#include "/home/artush/main/c++ project/homework/Matrix/src/matrix.h"
+#include "/home/artush/main/c++/homework/Matrix/src/matrix.h"
 
 TEST(matrix,Test)
 {
-    matrix a(2,3);
+    matrix<int> a(2,3);
     a(0,0) = 5;
     EXPECT_EQ(a(0,0),5);
 
 }
 TEST(matrix, Test2x2)
 {
-    matrix a(2, 2);
+    matrix<int> a(2, 2);
     a(0, 0) = 7;
     a(0, 1) = 3;
     a(1, 0) = 1;
@@ -24,8 +24,8 @@ TEST(matrix, Test2x2)
 
 TEST(matrix, add_1x1)
 {
-    matrix a(1, 1);
-    matrix b(1, 1);
+    matrix<int> a(1, 1);
+    matrix<int> b(1, 1);
     a(0, 0) = 3;
     b(0, 0) = 4;
     EXPECT_EQ((a + b)(0, 0), 7);
@@ -33,8 +33,8 @@ TEST(matrix, add_1x1)
 
 TEST(matrix, add_2x2_double)
 {
-    matrix a(2, 2);
-    matrix b(2, 2);
+    matrix<double> a(2, 2);
+    matrix<double> b(2, 2);
 
     a(0.0, 0.0) = 1.0; a(0.0, 1.0) = 2.0;
     a(1.0, 0.0) = 3.0; a(1.0, 1.0) = 4.0;
@@ -51,8 +51,8 @@ TEST(matrix, add_2x2_double)
 
 TEST(matrix, add_3x3)
 {
-    matrix a(3, 3);
-    matrix b(3, 3);
+    matrix<int> a(3, 3);
+    matrix<int> b(3, 3);
 
     a(0, 0) = 1; a(0, 1) = 2; a(0, 2) = 3;
     a(1, 0) = 4; a(1, 1) = 5; a(1, 2) = 6;
@@ -75,8 +75,8 @@ TEST(matrix, add_3x3)
 
 TEST(matrix,sub_1x1)
 {
-    matrix a(1, 1);
-    matrix b(1, 1);
+    matrix<int> a(1, 1);
+    matrix<int> b(1, 1);
     a(0, 0) = 5;
     b(0, 0) = 4;
     EXPECT_EQ((a - b)(0, 0), 1);
@@ -84,8 +84,8 @@ TEST(matrix,sub_1x1)
 
 TEST(matrix, sub_2x2_)
 {
-    matrix a(2, 2);
-    matrix b(2, 2);
+    matrix<double> a(2, 2);
+    matrix<double> b(2, 2);
 
     a(0.0, 0.0) = 10.0; a(0.0, 1.0) = 9.0;
     a(1.0, 0.0) = 8.0;  a(1.0, 1.0) = 7.0;
@@ -100,8 +100,8 @@ TEST(matrix, sub_2x2_)
 
 TEST(matrix, sub_3x3)
 {
-    matrix a(3, 3);
-    matrix b(3, 3);
+    matrix<int> a(3, 3);
+    matrix<int> b(3, 3);
 
     a(0, 0) = 20; a(0, 1) = 19; a(0, 2) = 18;
     a(1, 0) = 17; a(1, 1) = 16; a(1, 2) = 15;
@@ -125,8 +125,8 @@ TEST(matrix, sub_3x3)
 TEST(matrix,mul_1x1)
 {
     
-    matrix a(1, 1);
-    matrix b(1, 1);
+    matrix<int> a(1, 1);
+    matrix<int> b(1, 1);
     a(0, 0) = 5;
     b(0, 0) = 4;
     EXPECT_EQ((a * b)(0, 0), 20);
@@ -135,8 +135,8 @@ TEST(matrix,mul_1x1)
 
 TEST(matrix, mul_2x2)
 {
-    matrix a(2, 2);
-    matrix b(2, 2);
+    matrix<double> a(2, 2);
+    matrix<double> b(2, 2);
 
     a(0.0, 0.0) = 1.0; a(0.0, 1.0) = 2.0;
     a(1.0, 0.0) = 3.0; a(1.0, 1.0) = 4.0;
@@ -152,8 +152,8 @@ TEST(matrix, mul_2x2)
 
 TEST(matrix, mul_2x3_3x2)
 {
-    matrix a(2, 3); 
-    matrix b(3, 2); 
+    matrix<double> a(2, 3); 
+    matrix<double> b(3, 2); 
     
     a(0, 0) = 1.0; a(0, 1) = 2.0; a(0, 2) = 3.0;
     a(1, 0) = 4.0; a(1, 1) = 5.0; a(1, 2) = 6.0;
@@ -170,8 +170,8 @@ TEST(matrix, mul_2x3_3x2)
 
 TEST(matrix, mul_3x3_int)
 {
-    matrix a(3, 3); 
-    matrix b(3, 3); 
+    matrix<int> a(3, 3); 
+    matrix<int> b(3, 3); 
     
     a(0, 0) = 1; a(0, 1) = 2; a(0, 2) = 3;
     a(1, 0) = 4; a(1, 1) = 5; a(1, 2) = 6;
@@ -194,14 +194,14 @@ TEST(matrix, mul_3x3_int)
 
 TEST(matrix,transpose_1x1)
 {
-     matrix a(1,1);
+     matrix<int> a(1,1);
      a(0,0) = 5;
      EXPECT_EQ(a.transpose()(0,0),5);
 }
 
 TEST(matrix, transpose_2x3)
 {
-    matrix a(2, 3);
+    matrix<int> a(2, 3);
 
     a(0, 0) = 1; a(0, 1) = 2; a(0, 2) = 3;
     a(1, 0) = 4; a(1, 1) = 5; a(1, 2) = 6;
@@ -217,7 +217,7 @@ TEST(matrix, transpose_2x3)
 
 TEST(matrix, transpose_2x2)
 {
-    matrix a(2, 2);
+    matrix<double> a(2, 2);
 
     a(0, 0) = 1.5; a(0, 1) = 2.7;
     a(1, 0) = 3.2; a(1, 1) = 4.9;
@@ -227,3 +227,30 @@ TEST(matrix, transpose_2x2)
     EXPECT_EQ(a.transpose()(1, 0), 2.7); 
     EXPECT_EQ(a.transpose()(1, 1), 4.9); 
 }
+
+TEST(matrix,Test_bool)
+{
+    matrix<bool> a(2,3);
+    a(0,0) = true;
+    EXPECT_EQ(a(0,0),true);
+
+}
+
+bool add_exception();
+TEST(matrix,exception_add)
+{
+    EXPECT_EQ(add_exception(),true);
+}
+
+bool substract_exception();
+TEST(matrix,exception_sub)
+{
+    EXPECT_EQ(substract_exception(),true);
+}
+
+bool multiply_exception();
+TEST(matrix, multiply_exc)
+{
+    EXPECT_EQ(multiply_exception(),true);
+}
+
