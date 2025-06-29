@@ -9,17 +9,21 @@ protected:
     int columns_;
     T** memory_;
 public:
-    matrix_implementation(int rows,int columns);
-    ~matrix_implementation();
+    matrix_implementation<T>(int rows,int columns);
     T& operator()(int row, int column) ;
     const T& operator()(int row, int column) const;
 
 };
+
 template <typename T>
 class matrix : public matrix_implementation<T>
 {
 public:
     matrix(int rows,int columns);
+    matrix(const matrix<T>& other);
+    matrix<T>& operator=(const matrix<T>& other);
+
+
     matrix operator+(const matrix& other);
     matrix operator-(const matrix& other);
     matrix operator*(const matrix& other);
@@ -39,16 +43,6 @@ matrix_implementation<T>::matrix_implementation(int rows,int columns)
         memory_[i] = new T[columns_];
     }
     
-}
-
-template <typename T>
-matrix_implementation<T>::~matrix_implementation()
-{   
-    for(int i = 0; i < rows_;++i)
-    {
-        delete[] memory_[i];
-    }
-    delete[] memory_;
 }
 
 template <typename T>
@@ -150,3 +144,46 @@ matrix<T> matrix<T>::transpose() const
     }
     return new_matrix;
 }
+
+template<typename T>
+matrix<T>::matrix(const matrix& other) : matrix_implementation<T>(other.rows_,other.columns_)
+{
+    for(int i = 0;i < this->rows_; ++i)
+    {
+        for(int j = 0; j < this->columns_; ++j)
+        {
+            this->memory_[i][j] = other.memory_[i][j];
+        }
+    }
+}
+
+template<typename T>
+matrix<T>& matrix<T>::operator=(const matrix<T>& other)
+{
+    if (this==&other)
+    {
+        return *this;
+    }
+
+    for(int i = 0;i < this->rows_; ++i)
+    {
+        delete[] this->memory_[i];
+    }
+    delete[] this->memory_;
+
+    this->rows_ = other.rows_;
+    this->columns_ = other.columns_;
+    this->memory_ = new T*[this->rows_];
+    for(int i = 0;i < this->rows_; ++i)
+    {
+        this->memory_[i] = new T[this->columns_];
+        for(int j = 0;j < this->columns_;++j)
+        {
+            this->memory_[i][j] = other.memory_[i][j];
+        }
+    }
+
+    return *this;
+    
+}
+

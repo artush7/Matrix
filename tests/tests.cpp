@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
-#include "/home/artush/main/c++/homework/Matrix/src/matrix.h"
+#include "matrix.h"
+#include <iostream>
+#include <stdexcept>
 
 TEST(matrix,Test)
 {
@@ -236,21 +238,121 @@ TEST(matrix,Test_bool)
 
 }
 
-bool add_exception();
-TEST(matrix,exception_add)
+
+TEST(matrix, add_exception)
 {
-    EXPECT_EQ(add_exception(),true);
+    matrix<int> m1(2, 2); 
+    matrix<int> m2(2, 3); 
+
+    m1(0, 0) = 1; m1(0, 1) = 2;
+    m1(1, 0) = 3; m1(1, 1) = 4;
+
+    m2(0, 0) = 1; m2(0, 1) = 2; m2(0, 2) = 3;
+    m2(1, 0) = 4; m2(1, 1) = 5; m2(1, 2) = 6;
+
+    
+
+    EXPECT_THROW({auto result = m1 + m2;},std::invalid_argument);
 }
 
-bool substract_exception();
-TEST(matrix,exception_sub)
+
+TEST(matrix, sub_exception)
 {
-    EXPECT_EQ(substract_exception(),true);
+    matrix<int> m1(2, 2); 
+    matrix<int> m2(2, 3); 
+
+    m1(0, 0) = 1; m1(0, 1) = 2;
+    m1(1, 0) = 3; m1(1, 1) = 4;
+
+    m2(0, 0) = 1; m2(0, 1) = 2; m2(0, 2) = 3;
+    m2(1, 0) = 4; m2(1, 1) = 5; m2(1, 2) = 6;
+
+    
+
+    EXPECT_THROW({auto result = m1 - m2;},std::invalid_argument);
 }
 
-bool multiply_exception();
-TEST(matrix, multiply_exc)
+TEST(matrix, mul_exception)
 {
-    EXPECT_EQ(multiply_exception(),true);
+    matrix<int> m1(2, 1); 
+    matrix<int> m2(2, 3); 
+
+    m1(0, 0) = 1;
+    m1(1, 0) = 3;
+
+    m2(0, 0) = 1; m2(0, 1) = 2; m2(0, 2) = 3;
+    m2(1, 0) = 4; m2(1, 1) = 5; m2(1, 2) = 6;
+
+    
+
+    EXPECT_THROW({auto result = m1 * m2;},std::invalid_argument);
 }
 
+
+TEST(matrix, copy_contrustor)
+{
+    matrix<int> original(2, 2);
+    original(0, 0) = 1;
+    original(0, 1) = 2;
+    original(1, 0) = 3;
+    original(1, 1) = 4;
+
+    matrix<int> copy = original;
+
+    EXPECT_EQ(copy(0, 0), 1);
+    EXPECT_EQ(copy(0, 1), 2);
+    EXPECT_EQ(copy(1, 0), 3);
+    EXPECT_EQ(copy(1, 1), 4);
+
+    original(0, 0) = 5;
+
+    EXPECT_EQ(copy(0, 0), 1);
+}
+
+TEST(matrix, copy_operator)
+{
+    matrix<int> original(2, 2);
+    original(0, 0) = 1;
+    original(0, 1) = 2;
+    original(1, 0) = 3;
+    original(1, 1) = 4;
+
+    matrix<int> copy(2,2);
+    copy(0, 0) = 5;
+    copy(0, 1) = 6;
+    copy(1, 0) = 7;
+    copy(1, 1) = 8;
+
+
+    original = copy;
+
+    EXPECT_EQ(original(0, 0), 5);
+    EXPECT_EQ(original(0, 1), 6);
+    EXPECT_EQ(original(1, 0), 7);
+    EXPECT_EQ(original(1, 1), 8);
+
+    copy(0, 0) = 999;
+    EXPECT_EQ(original(0, 0), 5);
+
+
+    
+}
+
+TEST(matrix, copy_operator_2)
+{
+    matrix<int> original(2, 2);
+    original(0, 0) = 1;
+    original(0, 1) = 2;
+    original(1, 0) = 3;
+    original(1, 1) = 4;
+
+    original = original;
+
+    EXPECT_EQ(original(0, 0), 1);
+    EXPECT_EQ(original(0, 1), 2);
+    EXPECT_EQ(original(1, 0), 3);
+    EXPECT_EQ(original(1, 1), 4);
+
+
+
+}
