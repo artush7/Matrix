@@ -9,9 +9,15 @@ protected:
     int columns_;
     T** memory_;
 public:
-    matrix_implementation<T>(int rows,int columns);
-    T& operator()(int row, int column) ;
+    matrix_implementation(int rows,int columns);
+    T& operator()(int row, int column);
     const T& operator()(int row, int column) const;
+
+    matrix_implementation(const matrix_implementation<T>& other);
+    matrix_implementation<T>& operator=(const matrix_implementation<T>& other);
+    matrix_implementation(matrix_implementation<T>&& other);
+    matrix_implementation<T>& operator=(matrix_implementation<T>&& other);
+
 
 };
 
@@ -20,14 +26,12 @@ class matrix : public matrix_implementation<T>
 {
 public:
     matrix(int rows,int columns);
-    matrix(const matrix<T>& other);
-    matrix<T>& operator=(const matrix<T>& other);
-
 
     matrix operator+(const matrix& other);
     matrix operator-(const matrix& other);
     matrix operator*(const matrix& other);
     matrix transpose() const;
+
 };
 
 
@@ -43,7 +47,7 @@ matrix_implementation<T>::matrix_implementation(int rows,int columns)
         memory_[i] = new T[columns_];
     }
     
-}
+};
 
 template <typename T>
 T& matrix_implementation<T>::operator()(int row, int column)
@@ -120,7 +124,7 @@ matrix<T> matrix<T>::operator*(const matrix& other)
     {
         for (int j = 0; j < other.columns_;++j) 
         {
-            double sum = 0;
+            T sum = 0;
             for (int k = 0; k < this->columns_;++k) 
             {
                 sum += (*this)(i, k) * other(k, j);
@@ -145,11 +149,16 @@ matrix<T> matrix<T>::transpose() const
     return new_matrix;
 }
 
+
 template<typename T>
-matrix<T>::matrix(const matrix& other) : matrix_implementation<T>(other.rows_,other.columns_)
+matrix_implementation<T>::matrix_implementation(const matrix_implementation<T>& other)
 {
-    for(int i = 0;i < this->rows_; ++i)
+    this->rows_ = other.rows_;
+    this->columns_ = other.columns_;
+    this->memory_ = new T*[rows_];
+    for(int i = 0;i < this->rows_;++i)
     {
+        memory_[i] = new T[this->columns_];
         for(int j = 0; j < this->columns_; ++j)
         {
             this->memory_[i][j] = other.memory_[i][j];
@@ -158,9 +167,9 @@ matrix<T>::matrix(const matrix& other) : matrix_implementation<T>(other.rows_,ot
 }
 
 template<typename T>
-matrix<T>& matrix<T>::operator=(const matrix<T>& other)
+matrix_implementation<T>& matrix_implementation<T>::operator=(const matrix_implementation<T>& other)
 {
-    if (this==&other)
+    if (this == &other)     
     {
         return *this;
     }
@@ -184,6 +193,24 @@ matrix<T>& matrix<T>::operator=(const matrix<T>& other)
     }
 
     return *this;
-    
+
 }
 
+template<typename T>
+matrix_implementation<T>::matrix_implementation(matrix_implementation<T>&& other)
+{
+    this->rows_ = other.rows_;
+    this->columns_ = other.columns_;
+    this->memory_ = other.memory_;
+
+    other.memory_ = nullptr;
+}
+
+template<typename T>
+matrix_implementation<T>& matrix_implementation<T>::operator=(matrix_implementation<T>&& other)
+{
+    std::swap(this->rows_, other.rows_);
+    std::swap(this->columns_, other.columns_);
+    std::swap(this->memory_, other.memory_);
+    return *this;
+}

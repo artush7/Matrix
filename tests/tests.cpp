@@ -353,6 +353,38 @@ TEST(matrix, copy_operator_2)
     EXPECT_EQ(original(1, 0), 3);
     EXPECT_EQ(original(1, 1), 4);
 
-
-
 }
+TEST(matrix, move_constructor)
+{
+    matrix<int> original(2, 2);
+    original(0, 0) = 1;
+    original(0, 1) = 2;
+    original(1, 0) = 3;
+    original(1, 1) = 4;
+
+    matrix<int> move(std::move(original));
+    EXPECT_EQ(move(0, 0), 1);
+    EXPECT_EQ(move(0, 1), 2);
+    EXPECT_EQ(move(1, 0), 3);
+    EXPECT_EQ(move(1, 1), 4);
+}
+
+TEST(matrix, move_operator)
+{
+    matrix<int> original(2, 2);
+    original(0, 0) = 1;
+    original(0, 1) = 2;
+    original(1, 0) = 3;
+    original(1, 1) = 4;
+
+    matrix<int> move(1,1);
+    move(0,0) = 5;
+    move = std::move(original);
+
+    EXPECT_EQ(move(0, 0), 1);
+    EXPECT_EQ(move(0, 1), 2);
+    EXPECT_EQ(move(1, 0), 3);
+    EXPECT_EQ(move(1, 1), 4);
+}
+
+
