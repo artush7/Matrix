@@ -166,35 +166,39 @@ matrix_implementation<T>::matrix_implementation(const matrix_implementation<T>& 
     }
 }
 
+
 template<typename T>
 matrix_implementation<T>& matrix_implementation<T>::operator=(const matrix_implementation<T>& other)
 {
     if (this == &other)     
-    {
         return *this;
-    }
 
-    for(int i = 0;i < this->rows_; ++i)
+    T **tmp = new T*[other.rows_];
+    for(int i = 0; i < other.rows_; ++i)
     {
-        delete[] this->memory_[i];
-    }
-    delete[] this->memory_;
-
-    this->rows_ = other.rows_;
-    this->columns_ = other.columns_;
-    this->memory_ = new T*[this->rows_];
-    for(int i = 0;i < this->rows_; ++i)
-    {
-        this->memory_[i] = new T[this->columns_];
-        for(int j = 0;j < this->columns_;++j)
+        tmp[i] = new T[other.columns_];
+        for(int j = 0; j < other.columns_; ++j)
         {
-            this->memory_[i][j] = other.memory_[i][j];
+            tmp[i][j] = other.memory_[i][j];
         }
     }
 
-    return *this;
+    std::swap(tmp, memory_);
 
+
+    this->rows_ = other.rows_;
+    this->columns_ = other.columns_;
+
+    for(int i = 0; i < other.rows_; ++i)
+    {
+        delete[] tmp[i];
+    }
+    delete[] tmp;
+
+    return *this;
 }
+
+
 
 template<typename T>
 matrix_implementation<T>::matrix_implementation(matrix_implementation<T>&& other)
