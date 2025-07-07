@@ -173,27 +173,12 @@ matrix_implementation<T>& matrix_implementation<T>::operator=(const matrix_imple
     if (this == &other)     
         return *this;
 
-    T **tmp = new T*[other.rows_];
-    for(int i = 0; i < other.rows_; ++i)
-    {
-        tmp[i] = new T[other.columns_];
-        for(int j = 0; j < other.columns_; ++j)
-        {
-            tmp[i][j] = other.memory_[i][j];
-        }
-    }
+    matrix_implementation<T> tmp(other);
 
-    std::swap(tmp, memory_);
+    std::swap(this->rows_, tmp.rows_);
+    std::swap(this->columns_, tmp.columns_);
+    std::swap(this->memory_, tmp.memory_);
 
-
-    this->rows_ = other.rows_;
-    this->columns_ = other.columns_;
-
-    for(int i = 0; i < other.rows_; ++i)
-    {
-        delete[] tmp[i];
-    }
-    delete[] tmp;
 
     return *this;
 }
