@@ -252,7 +252,7 @@ TEST(matrix, add_exception)
 
     
 
-    EXPECT_THROW({auto result = m1 + m2;},std::invalid_argument);
+    EXPECT_THROW({m1 + m2;},std::invalid_argument);
 }
 
 
@@ -269,7 +269,7 @@ TEST(matrix, sub_exception)
 
     
 
-    EXPECT_THROW({auto result = m1 - m2;},std::invalid_argument);
+    EXPECT_THROW({m1 - m2;},std::invalid_argument);
 }
 
 TEST(matrix, mul_exception)
@@ -285,7 +285,7 @@ TEST(matrix, mul_exception)
 
     
 
-    EXPECT_THROW({auto result = m1 * m2;},std::invalid_argument);
+    EXPECT_THROW({m1 * m2;},std::invalid_argument);
 }
 
 
@@ -387,4 +387,32 @@ TEST(matrix, move_operator)
     EXPECT_EQ(move(1, 1), 4);
 }
 
+TEST(matrix, add_3x3_parallel)
+{
+    matrix<int> a(3, 3);
+    matrix<int> b(3, 3);
 
+    a(0, 0) = 1; a(0, 1) = 2; a(0, 2) = 3;
+    a(1, 0) = 4; a(1, 1) = 5; a(1, 2) = 6;
+    a(2, 0) = 7; a(2, 1) = 8; a(2, 2) = 9;
+
+    b(0, 0) = 10; b(0, 1) = 11; b(0, 2) = 12;
+    b(1, 0) = 13; b(1, 1) = 14; b(1, 2) = 15;
+    b(2, 0) = 16; b(2, 1) = 17; b(2, 2) = 18;
+
+    matrix<int> result(3,3); 
+
+    result(0,0) = 11; result(0,1) = 13; result(0,2) = 15;
+    result(1,0) = 17; result(1,1) = 19; result(1,2) = 21;
+    result(2,0) = 23; result(2,1) = 25; result(2,2) = 27;
+
+    a = a.add_parralel(b);
+    for(int i = 0;i < 3;++i)
+    {
+        for(int j = 0; j < 3;++j)
+        {
+            EXPECT_EQ(result(i,j), a(i,j)); 
+        }
+    }
+
+}

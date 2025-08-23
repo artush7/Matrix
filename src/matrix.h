@@ -1,5 +1,5 @@
 #include <stdexcept>
-
+#include <pthread.h>
 
 template <typename T>
 class matrix_implementation
@@ -31,9 +31,20 @@ public:
     matrix operator-(const matrix& other);
     matrix operator*(const matrix& other);
     matrix transpose() const;
+    matrix add_parralel(const matrix& other) const;
 
 };
 
+template <typename T>
+struct thread_struct
+{
+    int row_begin;
+    int row_end;
+    const matrix<T>* matrix_1;
+    const matrix<T>* matrix_2;
+    matrix<T>* matrix_result;
+
+};
 
 
 template <typename T>
@@ -202,4 +213,49 @@ matrix_implementation<T>& matrix_implementation<T>::operator=(matrix_implementat
     std::swap(this->columns_, other.columns_);
     std::swap(this->memory_, other.memory_);
     return *this;
+}
+
+template<typename T>
+matrix<T> matrix<T>::add_parralel(const matrix& other) const
+{
+    if(this->rows_ != other.rows_ || this->columns_ != other.columns_)
+    {
+        throw std::invalid_argument("Matrix dimensions do not match for addition");
+    }
+    else
+    {
+        matrix<T> result(this->rows_,this->columns_);
+        int thread_count = this->rows_;
+        pthread_t threads[thread_count];
+        thread_struct<T>* data = new thread_struct<T>[thread_count];
+        for(int i = 0;i < thread_count;++i)
+        {
+            data[i].row_begin = i;
+            data[i].row_end = i + 1;
+            data[i].matrix_1 = this;
+            data[i].matrix_2 = &other;
+            data[i].matrix_result = &result;
+
+            pthread_create(&threads[i],nullptr,[](void* arg) -> void*
+            {
+                thread_struct<T>* data = static_cast<thread_struct<T>*>(arg);
+                for(int i = data->row_begin; i < data->row_end;++i)
+                {
+                    for(int j = 0;j < data->matrix_1->columns_;++j)
+                    {
+                        (*data->matrix_result)(i,j) = (*data->matrix_1)(i,j) + (*data->matrix_2)(i,j);
+                    }
+                }
+                return nullptr;
+            },&data[i]);
+        }
+        for(int i = 0;i < thread_count;++i)
+        {
+            pthread_join(threads[i],nullptr);
+        }
+        delete[] data;
+        
+        return result;
+    }
+    
 }
