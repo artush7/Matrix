@@ -225,7 +225,7 @@ matrix<T> matrix<T>::add_parralel(const matrix& other) const
     else
     {
         matrix<T> result(this->rows_,this->columns_);
-        int thread_count = this->rows_;
+        const int thread_count = this->rows_;
         pthread_t threads[thread_count];
         thread_struct<T>* data = new thread_struct<T>[thread_count];
         for(int i = 0;i < thread_count;++i)
