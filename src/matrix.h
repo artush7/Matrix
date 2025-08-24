@@ -36,7 +36,7 @@ public:
 };
 
 template <typename T>
-struct thread_struct
+struct thread_data
 {
     int row_begin;
     int row_end;
@@ -227,7 +227,7 @@ matrix<T> matrix<T>::add_parralel(const matrix& other) const
         matrix<T> result(this->rows_,this->columns_);
         const int thread_count = this->rows_;
         pthread_t threads[thread_count];
-        thread_struct<T>* data = new thread_struct<T>[thread_count];
+        thread_data<T>* data = new thread_data<T>[thread_count];
         for(int i = 0;i < thread_count;++i)
         {
             data[i].row_begin = i;
@@ -238,7 +238,7 @@ matrix<T> matrix<T>::add_parralel(const matrix& other) const
 
             pthread_create(&threads[i],nullptr,[](void* arg) -> void*
             {
-                thread_struct<T>* data = static_cast<thread_struct<T>*>(arg);
+                thread_data<T>* data = static_cast<thread_data<T>*>(arg);
                 for(int i = data->row_begin; i < data->row_end;++i)
                 {
                     for(int j = 0;j < data->matrix_1->columns_;++j)
