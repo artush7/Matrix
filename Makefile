@@ -15,7 +15,7 @@ TEST_EXEC = $(BUILD_DIR)/runTests
 
 INCLUDES = -I$(SRC_DIR)
 
-LIBS = -lgtest -lgtest_main -pthread
+LIBS = -lgtest -lgtest_main -pthread 
 
 all:$(TEST_EXEC)
 
@@ -32,7 +32,7 @@ $(TEST_EXEC):$(OBJ_FILES) $(TEST_OBJ_FILES) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $^ -o $@ $(LIBS)
 
 test:$(TEST_EXEC)
-	./$(TEST_EXEC)
+	./$(TEST_EXEC) --gtest_print_time
 
 clean:
 	rm -rf $(BUILD_DIR)

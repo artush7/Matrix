@@ -38,8 +38,8 @@ public:
 template <typename T>
 struct thread_data
 {
-    int row_begin;
-    int row_end;
+    int start;
+    int end;
     const matrix<T>* matrix_1;
     const matrix<T>* matrix_2;
     matrix<T>* matrix_result;
@@ -225,29 +225,38 @@ matrix<T> matrix<T>::add_parralel(const matrix& other) const
     else
     {
         matrix<T> result(this->rows_,this->columns_);
-        const int thread_count = this->rows_;
+        const int thread_count = 12;
         pthread_t threads[thread_count];
         thread_data<T>* data = new thread_data<T>[thread_count];
-        for(int i = 0;i < thread_count;++i)
+        int matrix_elements = this->rows_ * this->columns_;
+        int elements_per_thread = matrix_elements / thread_count;
+        int remainder= matrix_elements % thread_count;
+        int start = 0;
+        for(int k = 0;k < thread_count;++k)
         {
-            data[i].row_begin = i;
-            data[i].row_end = i + 1;
-            data[i].matrix_1 = this;
-            data[i].matrix_2 = &other;
-            data[i].matrix_result = &result;
+            int elements = elements_per_thread;
+            if (k == thread_count - 1) elements = elements + remainder;
+            int end = start + elements;
 
-            pthread_create(&threads[i],nullptr,[](void* arg) -> void*
+            data[k].start = start;
+            data[k].end = end;
+            data[k].matrix_1 = this;
+            data[k].matrix_2 = &other;
+            data[k].matrix_result = &result;
+
+            pthread_create(&threads[k],nullptr,[](void* arg) -> void*
             {
                 thread_data<T>* data = static_cast<thread_data<T>*>(arg);
-                for(int i = data->row_begin; i < data->row_end;++i)
+                for(int i = data->start; i < data->end;++i)
                 {
-                    for(int j = 0;j < data->matrix_1->columns_;++j)
-                    {
-                        (*data->matrix_result)(i,j) = (*data->matrix_1)(i,j) + (*data->matrix_2)(i,j);
-                    }
+                    int r = i / data->matrix_1->columns_;
+                    int c = i % data->matrix_1->columns_;
+                    (*data->matrix_result)(r,c) = (*data->matrix_1)(r,c) + (*data->matrix_2)(r,c);
                 }
                 return nullptr;
-            },&data[i]);
+            },&data[k]);
+
+            start = end;
         }
         for(int i = 0;i < thread_count;++i)
         {

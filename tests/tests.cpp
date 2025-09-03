@@ -2,6 +2,7 @@
 #include "matrix.h"
 #include <iostream>
 #include <stdexcept>
+#include <chrono>
 
 TEST(matrix,Test)
 {
@@ -406,13 +407,104 @@ TEST(matrix, add_3x3_parallel)
     result(1,0) = 17; result(1,1) = 19; result(1,2) = 21;
     result(2,0) = 23; result(2,1) = 25; result(2,2) = 27;
 
-    a = a.add_parralel(b);
+    auto start = std::chrono::high_resolution_clock::now();
+
+    result = a.add_parralel(b);
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    std::cout << "time:" << duration.count() << std::endl;
     for(int i = 0;i < 3;++i)
     {
         for(int j = 0; j < 3;++j)
         {
-            EXPECT_EQ(result(i,j), a(i,j)); 
+            EXPECT_EQ(result(i,j), a(i,j) + b(i,j)); 
         }
     }
+
+}
+
+
+TEST(matrix, add_parallel_10000)
+{
+        const int count = 10000;
+        matrix<float> a (count, count);
+        matrix<float> b (count, count);
+
+        for(int i = 0; i < count;++i)
+        {
+            for(int j = 0; j < count; ++j)
+            {
+                float digit = j + 0.4;
+                a(i,j) = digit;
+                b(i,j) = digit;
+            }
+        }
+
+        
+
+        matrix<float> c(count,count);
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        c = a.add_parralel(b);
+
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        std::cout << "time:" << duration.count() << std::endl;
+
+        for(int i = 0; i < count;++i)
+        {
+            for(int j = 0; j < count; ++j)
+            {
+                EXPECT_FLOAT_EQ(c(i,j), a(i,j) + b(i,j));
+            }
+        }
+
+}
+
+TEST(matrix, add_10000)
+{
+        const int count = 10000;
+        matrix<float> a (count, count);
+        matrix<float> b (count, count);
+
+        for(int i = 0; i < count;++i)
+        {
+            for(int j = 0; j < count; ++j)
+            {
+                float digit = j + 0.4;
+                a(i,j) = digit;
+                b(i,j) = digit;
+            }
+        }
+
+        
+
+        matrix<float> c(count,count);
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        c = a + b;
+
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+        std::cout << "time:" << duration.count() << std::endl;
+
+        for(int i = 0; i < count;++i)
+        {
+            for(int j = 0; j < count; ++j)
+            {
+                EXPECT_FLOAT_EQ(c(i,j), a(i,j) + b(i,j));
+            }
+        }
 
 }
