@@ -10,6 +10,7 @@ protected:
     T** memory_;
 public:
     matrix_implementation(int rows,int columns);
+    ~matrix_implementation();
     T& operator()(int row, int column);
     const T& operator()(int row, int column) const;
 
@@ -59,6 +60,19 @@ matrix_implementation<T>::matrix_implementation(int rows,int columns)
     }
     
 };
+
+template <typename T>
+matrix_implementation<T>::~matrix_implementation() 
+{
+    if (memory_)
+    {
+        for(int i = 0;i < rows_;++i)
+        {
+            delete[] memory_[i];
+        }
+        delete[] memory_;
+    }
+}
 
 template <typename T>
 T& matrix_implementation<T>::operator()(int row, int column)

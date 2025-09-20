@@ -407,15 +407,9 @@ TEST(matrix, add_3x3_parallel)
     result(1,0) = 17; result(1,1) = 19; result(1,2) = 21;
     result(2,0) = 23; result(2,1) = 25; result(2,2) = 27;
 
-    auto start = std::chrono::high_resolution_clock::now();
 
     result = a.add_parralel(b);
 
-    auto end = std::chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-    std::cout << "time:" << duration.count() << std::endl;
     for(int i = 0;i < 3;++i)
     {
         for(int j = 0; j < 3;++j)
@@ -429,7 +423,7 @@ TEST(matrix, add_3x3_parallel)
 
 TEST(matrix, add_parallel_10000)
 {
-        const int count = 10000;
+        const int count = 30000;
         matrix<float> a (count, count);
         matrix<float> b (count, count);
 
@@ -470,7 +464,7 @@ TEST(matrix, add_parallel_10000)
 
 TEST(matrix, add_10000)
 {
-        const int count = 10000;
+        const int count = 30000;
         matrix<float> a (count, count);
         matrix<float> b (count, count);
 
