@@ -32,7 +32,8 @@ public:
     matrix operator-(const matrix& other);
     matrix operator*(const matrix& other);
     matrix transpose() const;
-    matrix add_parralel(const matrix& other) const;
+    matrix add_parallel(const matrix& other) const;
+    matrix multiply_parallel(const matrix& other) const;
 
 };
 
@@ -230,7 +231,7 @@ matrix_implementation<T>& matrix_implementation<T>::operator=(matrix_implementat
 }
 
 template<typename T>
-matrix<T> matrix<T>::add_parralel(const matrix& other) const
+matrix<T> matrix<T>::add_parallel(const matrix& other) const
 {
     if(this->rows_ != other.rows_ || this->columns_ != other.columns_)
     {
@@ -278,6 +279,70 @@ matrix<T> matrix<T>::add_parralel(const matrix& other) const
         }
         delete[] data;
         
+        return result;
+    }
+    
+}
+
+
+template<typename T>
+matrix<T> matrix<T>::multiply_parallel(const matrix& other) const
+{
+    if (this->columns_ != other.rows_) 
+    {
+        throw std::invalid_argument("Matrix dimensions do not match for multiplying");
+    }
+    else
+    {
+        matrix result(this->rows_, other.columns_);
+        const int thread_count = 12;
+        pthread_t threads[thread_count];
+        thread_data<T>* data = new thread_data<T>[thread_count];
+        int per_thread = this->rows_ / thread_count;
+        int remainder = this->rows_ % thread_count;
+        int start = 0;
+        
+        for(int n = 0; n < thread_count;++n)
+        {
+            int rows = per_thread;
+            if (n == thread_count - 1) rows = rows + remainder;
+            int end = start + rows;
+
+            data[n].start = start;
+            data[n].end = end;
+            data[n].matrix_1 = this;
+            data[n].matrix_2 = &other;
+            data[n].matrix_result = &result;
+
+            pthread_create(&threads[n],nullptr,[](void* arg) -> void*
+            {
+                thread_data<T>* data = static_cast<thread_data<T>*>(arg);
+                for (int i = data->start; i < data->end;++i) 
+                {
+                    
+                    for (int j = 0; j < data->matrix_2->columns_;++j)
+                    {
+                        T sum = 0;
+                        for (int k = 0; k < data->matrix_1->columns_;++k)
+                        {
+                            sum += (*data->matrix_1)(i,k) * (*data->matrix_2)(k,j);
+                        }
+                        (*data->matrix_result)(i,j) = sum;
+                    }
+                    
+                }
+                return nullptr;
+            },&data[n]);
+            start = end;
+
+        }
+
+        for(int i = 0;i < thread_count;++i)
+        {
+            pthread_join(threads[i],nullptr);
+        }
+        delete[] data;
+
         return result;
     }
     
