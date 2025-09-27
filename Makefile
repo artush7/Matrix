@@ -1,6 +1,6 @@
 #Clang
 CXX = clang++ -std=c++23
-CXXFLAGS = -O2 -Wall -Wextra -g -Wunreachable-code -Wunreachable-code-loop-increment -Wunreachable-code-return
+CXXFLAGS = -O2 -mfma -Wall -Wextra -g -Wunreachable-code -Wunreachable-code-loop-increment -Wunreachable-code-return
 
 #Directories
 SRC_DIR = src

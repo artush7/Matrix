@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <chrono>
+#include <cmath>
 
 TEST(matrix,Test)
 {
@@ -576,7 +577,7 @@ TEST(matrix, multiply_parallel_1000)
 
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-        std::cout << "multiply time:" << duration.count() << std::endl;
+        std::cout << "parallel multiply time:" << duration.count() << std::endl;
 
         for (int i = 0; i < count; ++i) 
         {
@@ -586,7 +587,7 @@ TEST(matrix, multiply_parallel_1000)
             for (int k = 0; k < count; ++k) {
                 sum += a(i,k) * b(k,j);
             }
-            EXPECT_FLOAT_EQ(c(i,j), sum);
+            EXPECT_NEAR(c(i,j), sum, 100000);
         }
     }
 

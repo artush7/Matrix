@@ -317,19 +317,26 @@ matrix<T> matrix<T>::multiply_parallel(const matrix& other) const
             pthread_create(&threads[n],nullptr,[](void* arg) -> void*
             {
                 thread_data<T>* data = static_cast<thread_data<T>*>(arg);
+                const matrix<T>* __restrict__ matrix_A = data->matrix_1;
+                const matrix<T>* __restrict__ matrix_B = data->matrix_2;
+                matrix<T>* __restrict__ matrix_C = data->matrix_result;
+
+
                 for (int i = data->start; i < data->end;++i) 
                 {
-                    
-                    for (int j = 0; j < data->matrix_2->columns_;++j)
+                    for(int k = 0; k < matrix_A->columns_; ++k)
                     {
+
                         T sum = 0;
-                        for (int k = 0; k < data->matrix_1->columns_;++k)
+                        #pragma clang loop vectorize(enable) vectorize_width(8) interleave_count(16)
+                        for(int j = 0;j < matrix_B->columns_;++j)
                         {
-                            sum += (*data->matrix_1)(i,k) * (*data->matrix_2)(k,j);
+                            sum += (*matrix_A)(i,k) * (*matrix_B)(k,j);
                         }
-                        (*data->matrix_result)(i,j) = sum;
+                        (*matrix_C)(i,k) = sum;
+                        
                     }
-                    
+  
                 }
                 return nullptr;
             },&data[n]);
