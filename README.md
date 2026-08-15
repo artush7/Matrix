@@ -25,7 +25,7 @@ A C++ matrix library supporting core linear algebra operations with built-in mul
 - **Exception Handling:** Validates matrix dimensions and throws `std::invalid_argument` on mismatches.
 - **Testing & Libraries:** Includes a Google Test (`gtest`) suite with benchmarks (`<chrono>`) and supports static (`.a`) or dynamic (`.so`) builds.
 
-  ## Known Issues
+## Known Issues
 
 - This project was created for learning purposes, so it may contain imperfections.
 - The thread count is hardcoded to 12 threads (you can manually change this value in the source code).
